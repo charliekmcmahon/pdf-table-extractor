@@ -13,37 +13,36 @@ app.use(bodyParser.json());
  * Function to clean and filter table data, splitting multiline cells
  */
 function filterTableData(result) {
-    // Define the required columns
-    const requiredColumns = ['Item Code', 'Item Description', 'UOM', 'Units per Ctn'];
-
-    // Initialize an array to store cleaned data
     const cleanedData = [];
+    let currentCategory = "";  // Initialize the category tracker
 
-    // Iterate over each page in the result
     result.pageTables.forEach((pageTable) => {
-        const tableHeaders = pageTable.tables[0];  // First row is the header
-        const tableRows = pageTable.tables.slice(1);  // The rest are rows
+        const tableRows = pageTable.tables.slice(1);  // Skip the header row
 
-        // Get the indices of the required columns
-        const indices = requiredColumns.map((col) => tableHeaders.indexOf(col));
-
-        // Iterate over each row and split multiline cells
         tableRows.forEach((row) => {
-            // Split multiline cells by line breaks ('\n')
-            const splitRows = indices.map((index) => row[index] ? row[index].split('\n') : []);
+            // Check if the row is a category (usually bold and all caps)
+            const itemDescription = row[1];
+            const itemCode = row[0];
 
-            // Align the columns by rows (taking into account multiline cells)
-            const rowCount = Math.max(...splitRows.map(arr => arr.length));
-            
-            for (let i = 0; i < rowCount; i++) {
-                const filteredRow = splitRows.map(arr => arr[i] || "");  // Fill empty cells with empty strings
-                cleanedData.push(filteredRow);
+            if (itemCode.trim() === "" && itemDescription.match(/^[A-Z]+\s[A-Z]+/)) {
+                // This is a category header (e.g., "B26 BREAD-BUNS")
+                currentCategory = itemDescription;
+            } else {
+                // This is an actual item, associate it with the current category
+                cleanedData.push({
+                    itemCode: row[0].trim(),
+                    description: row[1].trim(),
+                    uom: row[2].trim(),
+                    unitsPerCtn: row[3].trim(),
+                    category: currentCategory
+                });
             }
         });
     });
 
     return cleanedData;
 }
+
 
 /**
  * Route: POST /extract
