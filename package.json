@@ -1,0 +1,22 @@
+{
+  "name": "pdf-table-extractor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charliekmcmahon/pdf-table-extractor.git"
+  },
+  "author": "Charlie McMahon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/charliekmcmahon/pdf-table-extractor/issues"
+  },
+  "homepage": "https://github.com/charliekmcmahon/pdf-table-extractor#readme",
+  "dependencies": {
+    "pdf-table-extractor": "^1.0.3"
+  }
+}
