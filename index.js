@@ -28,9 +28,10 @@ app.post('/extract', (req, res) => {
     pdf_table_extractor(pdfPath,
         (result) => {
             // Clean and filter the table data
+            const cleanedData = result && result.page && result.page[0] && result.page[0].table ? result.page[0].table : [];
             
             // Send back the cleaned data
-            res.json({ result });
+            res.json({ result: cleanedData });
         },
         (err) => {
             console.error('Error:', err);
