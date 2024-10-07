@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/charliekmcmahon/pdf-table-extractor#readme",
   "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.0",
     "pdf-table-extractor": "^1.0.3"
   }
 }
