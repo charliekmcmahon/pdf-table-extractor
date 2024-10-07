@@ -1,16 +1,42 @@
-var pdf_table_extractor = require("pdf-table-extractor");
- 
-//PDF parsed
-function success(result)
-{
-   console.log(JSON.stringify(result));
-}
- 
-//Error
-function error(err)
-{
-   console.error('Error: ' + err);
-}
- 
-pdf_table_extractor("source/sample1.pdf",success,error);
- 
+const express = require('express');
+const bodyParser = require('body-parser');
+const pdf_table_extractor = require('pdf-table-extractor');
+const path = require('path');
+
+const app = express();
+const PORT = 3000;
+
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
+/**
+ * Route: POST /extract
+ * Description: Extract table from PDF. 
+ * Request Body: { "pdfName": "<name_of_pdf>" }
+ */
+app.post('/extract', (req, res) => {
+    const { pdfName } = req.body;
+    
+    if (!pdfName) {
+        return res.status(400).json({ error: 'Please provide the PDF name' });
+    }
+
+    // Construct PDF path
+    const pdfPath = path.join(__dirname, 'source', pdfName);
+
+    // Extract table from PDF
+    pdf_table_extractor(pdfPath, 
+        (result) => {
+            res.json(result);
+        },
+        (err) => {
+            console.error('Error:', err);
+            res.status(500).json({ error: 'Failed to extract table from PDF' });
+        }
+    );
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
